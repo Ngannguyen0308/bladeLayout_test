@@ -5,13 +5,13 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class ProductType extends Model
+class Producttype extends Model
 {
     use HasFactory;
-    protected $table = 'type_products';
 
-    public function product()
-    {
-        return $this->hasMany('App\Products');
+    protected $table = "type_products";
+
+    public function products(){
+        return $this->hasMany('App\Products','','id');
     }
 }

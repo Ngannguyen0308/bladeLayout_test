@@ -1,37 +1,87 @@
 <?php
 
 namespace App\Http\Controllers;
+
 use Illuminate\Http\Request;
 use App\Models\Slide;
 use App\Models\Products;
-use App\Models\ProductType;
+use App\Models\Producttype;
+use App\Models\Comment;
+use App\Models\Cart;
+use Illuminate\Support\Facades\Session;
+
 
 class PageController extends Controller
 {
     public function getIndex()
     {
         $slide = Slide::all();
-        $new_product = Products::where('new',1)->paginate(8);
-        $top_product = Products::where('promotion_price','<>',0)->orderBy('promotion_price')->paginate(4);
-        return view('page.trangchu', compact('slide','new_product', 'top_product'));
+
+        $new_product = Products::where('new',1)-> paginate(8);
+
+        $promotion_product = Products::where('promotion_price', '<>', 0)-> paginate(4);
+        return view('page.trangchu', compact('slide', 'new_product', 'promotion_product'));
     }
 
-    public function getLoaiSp($type){
+    public function getLoaiSp($type)
+    {
+        $type_product = Producttype::all();
 
-        $types = ProductType::all();
-        $type_name = ProductType::where('id',$type)->first();
-        $type_product = Products::all();
-        $product_filter = Products::where('id_type',$type)->limit(3)->get();
-        $sug = Products::where('id_type', '<>', $type)->limit(3)->get();
-        return view('page.loai_sanpham', compact( 'type_name','types','type_product', 'product_filter', 'sug'));
+        $sp_theoloai = Products::where('id_type',$type)->get();
+
+        $sp_khac = Products::where('id_type', $type)->paginate(3);
+
+        $loai_sp = Producttype::where('id', $type)->first();
+
+        return view('page.loai_sanpham', compact('type_product','sp_theoloai', 'sp_khac', 'loai_sp'));
     }
-    public function getDetail(){
-        return view('page.chitiet_sanpham');
+
+    public function getModel()
+    {
+    
+        return view('page.product_model');
     }
-    public function getContact(){
-        return view('page.lienhe');
+
+    public function getDetail(Request $request)
+    {
+        $sanpham = Products::where('id', $request->id)->first();
+        $splienquan = Products::where('id', '<>', $sanpham->id, 'and', 'id_type', '=', $sanpham->id_type,)->paginate(3);
+        $comments = Comment::where('id_product', $request->id)->get();
+        return view('page.product_detail', compact('sanpham', 'splienquan', 'comments'));
     }
-    public function getAbout(){
+
+    public function getAddToCart(Request $req, $id) 
+    {
+        $product = Products::find($id);
+        $oldCart = Session('cart')?Session::get('cart'):null;
+        $cart = new Cart($oldCart);
+        $cart->add($product,$id);
+        $req->session()->put('cart', $cart);
+        return redirect()->back();
+    }
+
+    public function getDelItemCart($id)
+    {
+        $oldCart = Session('cart')?Session::get('cart'):null;
+        $cart = new Cart($oldCart);
+        $cart->removeItems($id);
+        if(count($cart->items)>0){
+        Session::put('cart', $cart);  
+
+        }
+        else{
+            Session::forget('cart');
+        }
+        return redirect()->back();
+    }
+
+    public function getContact()
+    {
+        return view('page.contact');
+    }
+
+    public function getAbout()
+    {
         return view('page.about');
     }
 }
