@@ -7,6 +7,7 @@ use App\Http\Controllers\arrController;
 use App\Http\Controllers\xulyController;
 use App\Http\Controllers\signupController;
 use App\Http\Controllers\PageController;
+use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,5 +55,17 @@ Route::get('loai-san-pham/{type}', [PageController::class, 'getLoaiSp']);
 // ----------------------CART---------------------
 Route::get('add-to-cart/{id}', [PageController::class, 'getAddToCart'])->name('themgiohang');
 Route::get('del-cart/{id}', [PageController::class, 'getDelItemCart'])->name('xoagiohang');
+
+// login register
+Route::get('/register', function(){
+    return view('users.register');
+});
+Route::get('/login', function(){
+    return view('users.login');
+});
+
+Route::post('/register',[UserController::class, 'Register']);
+Route::post('/login',[UserController::class, 'Login']);
+Route::get('/logout',[UserController::class, 'Logout']);
 
 
