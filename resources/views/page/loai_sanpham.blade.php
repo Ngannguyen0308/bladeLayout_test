@@ -27,7 +27,7 @@
                 </div>
                 <div class="col-sm-9">
                     <div class="beta-products-list">
-                        <h4>New Products</h4>
+                    <h4>New Products</h4>
                         <br>
                         @foreach($type_product as $loai)
                         @if( $sp_theoloai[0]->id_type == $loai->id )
@@ -60,6 +60,7 @@
                                     </div>
                                     <div class="single-item-caption">
                                         <a class="add-to-cart pull-left" href="{{route('themgiohang', $sp->id)}}"><i class="fa fa-shopping-cart"></i></a>
+                                        <a class="add-to-cart pull-left" href="#"><i class="fa fa-heart"></i></a>
                                         <a class="beta-btn primary" href="/type/{{$sp->id}}">Details <i class="fa fa-chevron-right"></i></a>
                                         <div class="clearfix"></div>
                                     </div>
